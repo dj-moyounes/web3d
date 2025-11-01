@@ -24,10 +24,21 @@ header{
 }
 .brand{display:flex;align-items:center;gap:20px;}
 .profile-pic{
-  width:150px;height:150px;border-radius:25px;
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  overflow:hidden;
   background:linear-gradient(135deg,#00e5ff,#8458ff);
-  display:grid;place-items:center;font-weight:700;font-size:32px;color:#00222a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   box-shadow:0 10px 30px rgba(0,0,0,0.7);
+}
+.profile-pic img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
 }
 .title h1{font-size:26px;}
 .title p{font-size:14px;color:var(--muted);}
@@ -78,7 +89,9 @@ header{
 
 <header>
   <div class="brand">
-    <div class="profile-pic">DMY</div>
+    <div class="profile-pic">
+      <img src="./PFP.jpg" alt="Profile Picture">
+    </div>
     <div class="title">
       <h1>Djilani Mohamed Younes</h1>
       <p>Email: <a href="mailto:djilanimoyounes@gmail.com" style="color:var(--accent);text-decoration:none;">djilanimoha.younes@gmail.com</a></p>
@@ -129,4 +142,3 @@ input.addEventListener('change',()=>{
 
 </body>
 </html>
-
