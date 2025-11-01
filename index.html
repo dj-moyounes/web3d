@@ -1,205 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Djilani Mohamed Younes - Web 3D TPs</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: white;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      text-align: center;
-      margin-top: 40px;
-      animation: fadeIn 1s ease;
-    }
-
-    header img {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 4px solid #fff;
-      object-fit: cover;
-      box-shadow: 0 0 20px rgba(255,255,255,0.3);
-    }
-
-    header h1 {
-      margin-top: 15px;
-      font-size: 1.8em;
-    }
-
-    header p {
-      margin-top: -10px;
-      font-size: 1em;
-      color: #ddd;
-    }
-
-    .socials {
-      margin-top: 15px;
-    }
-
-    .socials a {
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-      font-size: 1.5em;
-      transition: 0.3s;
-    }
-
-    .socials a:hover {
-      color: #00bfff;
-    }
-
-    section {
-      width: 90%;
-      max-width: 800px;
-      margin-top: 40px;
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      animation: fadeIn 1.2s ease;
-    }
-
-    h2 {
-      text-align: center;
-      border-bottom: 2px solid #00bfff;
-      padding-bottom: 5px;
-    }
-
-    .upload-area {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    input, button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-    }
-
-    input[type="password"], input[type="file"] {
-      width: 70%;
-      max-width: 300px;
-    }
-
-    button {
-      background-color: #00bfff;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #008ccc;
-    }
-
-    .tp-list {
-      margin-top: 20px;
-      max-height: 250px;
-      overflow-y: auto;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      padding: 10px;
-    }
-
-    .tp-list a {
-      display: block;
-      color: #00bfff;
-      text-decoration: none;
-      margin: 8px 0;
-      transition: 0.3s;
-    }
-
-    .tp-list a:hover {
-      text-decoration: underline;
-      color: #fff;
-    }
-
-    footer {
-      margin-top: 40px;
-      padding: 20px;
-      color: #aaa;
-      font-size: 0.9em;
-      text-align: center;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Djilani Mohamed Younes — TP Web 3D</title>
+<style>
+:root{
+  --bg1:#071029;
+  --bg2:#0f2740;
+  --accent:#00e5ff;
+  --muted:#9aa8b3;
+  --card:#0b1622;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,Arial,sans-serif;}
+body{
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#eaf6ff;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;gap:32px;padding:40px 20px;
+}
+header{
+  width:100%;max-width:1100px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:20px;}
+.profile-pic{
+  width:150px;height:150px;border-radius:25px;
+  background:linear-gradient(135deg,#00e5ff,#8458ff);
+  display:grid;place-items:center;font-weight:700;font-size:32px;color:#00222a;
+  box-shadow:0 10px 30px rgba(0,0,0,0.7);
+}
+.title h1{font-size:26px;}
+.title p{font-size:14px;color:var(--muted);}
+.socials{margin-top:8px;}
+.socials a{
+  color:var(--accent);margin-right:14px;font-size:18px;text-decoration:none;transition:0.2s;
+}
+.socials a:hover{color:#68d6ff;transform:scale(1.1);}
+.section{
+  width:100%;max-width:1100px;background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+.section h2{font-size:22px;margin-bottom:12px;}
+.section p{font-size:15px;color:var(--muted);}
+.scroll{
+  width:100%;max-width:1100px;height:380px;
+  overflow-y:auto;margin-top:10px;
+  background:rgba(255,255,255,0.02);
+  border-radius:14px;border:1px solid rgba(255,255,255,0.03);
+  padding:20px;scrollbar-color:var(--accent) rgba(255,255,255,0.05);
+}
+.scroll::-webkit-scrollbar{width:6px;}
+.scroll::-webkit-scrollbar-thumb{background:var(--accent);border-radius:6px;}
+.tp-item{
+  background:rgba(255,255,255,0.03);
+  border:1px dashed rgba(255,255,255,0.08);
+  padding:14px;border-radius:10px;margin-bottom:10px;
+  font-size:13px;color:var(--muted);
+}
+.upload-area{
+  margin-top:20px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  border:2px dashed rgba(255,255,255,0.1);
+  padding:30px;border-radius:14px;
+  background:rgba(255,255,255,0.03);
+}
+.upload-area input{display:none;}
+.upload-area label{
+  background:linear-gradient(90deg,#00e5ff,#8458ff);
+  color:#00222a;font-weight:600;padding:10px 18px;border-radius:10px;
+  cursor:pointer;box-shadow:0 5px 20px rgba(0,229,255,0.1);
+}
+.upload-area p{font-size:13px;color:var(--muted);}
+</style>
 </head>
 <body>
-  <header>
-    <img src="https://via.placeholder.com/140" alt="Profile Photo" />
-    <h1>Djilani Mohamed Younes</h1>
-    <p>Email: <a href="mailto:djilani@example.com" style="color:#00bfff;">djilani@example.com</a></p>
-    <div class="socials">
-      <a href="https://linkedin.com" target="_blank">💼</a>
-      <a href="https://instagram.com" target="_blank">📸</a>
-      <a href="https://t.me" target="_blank">💬</a>
-    </div>
-  </header>
 
-  <section>
-    <h2>📘 Web 3D Class - TP Dashboard</h2>
-    <p style="text-align:center;">
-      Group 3 | Instructor: [Your Teacher’s Name] <br>
-      This is where I upload and manage all my TPs for the Web 3D module.
-    </p>
-
-    <div class="upload-area">
-      <h3>🔐 Upload New TP</h3>
-      <form id="uploadForm" enctype="multipart/form-data" method="POST" action="upload.php">
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <input type="file" name="file" required>
-        <button type="submit">📁 Upload TP</button>
-      </form>
-      <p style="font-size:0.9em; color:#ccc;">Only you can upload (Password Protected)</p>
-    </div>
-
-    <div class="tp-list" id="tpList">
-      <h3>📂 My TPs</h3>
-      <div id="filesContainer">
-        <!-- PHP will auto-load files from TP/ here -->
-        <?php
-          $dir = "TP/";
-          if (is_dir($dir)) {
-            $files = array_diff(scandir($dir), array('.', '..'));
-            if (count($files) > 0) {
-              foreach ($files as $file) {
-                echo "<a href='TP/$file' target='_blank'>$file</a>";
-              }
-            } else {
-              echo "<p>No TPs uploaded yet.</p>";
-            }
-          } else {
-            echo "<p>No TPs folder found.</p>";
-          }
-        ?>
+<header>
+  <div class="brand">
+    <div class="profile-pic">DMY</div>
+    <div class="title">
+      <h1>Djilani Mohamed Younes</h1>
+      <p>Email: <a href="mailto:djilanimoyounes@gmail.com" style="color:var(--accent);text-decoration:none;">djilanimoha.younes@gmail.com</a></p>
+      <div class="socials">
+        <a href="https://www.linkedin.com" target="_blank">🌐 LinkedIn</a>
+        <a href="https://www.instagram.com" target="_blank">📷 Instagram</a>
+        <a href="https://t.me" target="_blank">✈️ Telegram</a>
       </div>
     </div>
-  </section>
+  </div>
+</header>
 
-  <footer>
-    © 2025 Djilani Mohamed Younes | Web 3D TP Portal
-  </footer>
+<section class="section">
+  <h2>About the Class — Web 3D</h2>
+  <p>This page is part of the Web 3D class at IDTW. It showcases a clean user interface, interactive upload system, and smooth design elements that reflect modern front-end UI/UX principles.</p>
+</section>
+
+<div class="scroll" id="tpList">
+  <!-- Uploaded TP files will appear here -->
+</div>
+
+<div class="upload-area">
+  <label for="fileInput">📁 Upload TP</label>
+  <input type="file" id="fileInput" multiple>
+  <p>Click to upload your TP files (Password Protected)</p>
+</div>
+
+<script>
+const input=document.getElementById('fileInput');
+const list=document.getElementById('tpList');
+
+input.addEventListener('change',()=>{
+  const pass = prompt("Enter password to upload:");
+  if(pass !== "1234"){
+    alert("❌ Incorrect password. Upload denied.");
+    input.value="";
+    return;
+  }
+  for(const file of input.files){
+    const item=document.createElement('div');
+    item.className='tp-item';
+    item.textContent='📄 '+file.name;
+    list.appendChild(item);
+  }
+  alert("✅ File(s) uploaded successfully!");
+});
+</script>
+
 </body>
 </html>
+
