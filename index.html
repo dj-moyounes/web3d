@@ -274,7 +274,20 @@ body{
       <div class="tag" data-ext="jpg">JPG</div>
       <div class="tag" data-ext="txt">TXT</div>
     </div>
-  
+   <!-- ✅ Add this inside your HTML, right before the closing </div> of the profile-card -->
+<div style="margin-top:30px;">
+  <h3 style="font-size:15px;color:var(--muted);margin-bottom:10px;text-align:center">
+    💌 Contact Me
+  </h3>
+  <form action="https://formspree.io/f/mqaggrgw" method="POST" class="contact-form" style="display:flex;flex-direction:column;gap:12px;margin-top:10px;">
+    <input type="text" name="name" placeholder="Your name" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
+    <input type="email" name="email" placeholder="Your email" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
+    <textarea name="message" placeholder="Your message..." rows="4" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;resize:none;"></textarea>
+    <button type="submit" class="btn" style="justify-content:center;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001b22;border:0;font-weight:700;cursor:pointer;box-shadow:var(--neon);">
+      <i class="fa fa-paper-plane"></i> Send Message
+    </button>
+  </form>
+  <p style="color:var(--muted);font-size:12px;text-align:center;margin-top:6px;">Form powered by Formspree</p>
 </div>
 
   </div>
@@ -290,20 +303,7 @@ body{
         </div>
         <button class="btn" id="refreshBtn" title="Refresh list"><i class="fa fa-sync"></i> Refresh</button>
       </div>
-        <!-- ✅ Add this inside your HTML, right before the closing </div> of the profile-card -->
-<div style="margin-top:30px;">
-  <h3 style="font-size:15px;color:var(--muted);margin-bottom:10px;text-align:center">
-    💌 Contact Me
-  </h3>
-  <form action="https://formspree.io/f/mqaggrgw" method="POST" class="contact-form" style="display:flex;flex-direction:column;gap:12px;margin-top:10px;">
-    <input type="text" name="name" placeholder="Your name" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
-    <input type="email" name="email" placeholder="Your email" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
-    <textarea name="message" placeholder="Your message..." rows="4" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;resize:none;"></textarea>
-    <button type="submit" class="btn" style="justify-content:center;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001b22;border:0;font-weight:700;cursor:pointer;box-shadow:var(--neon);">
-      <i class="fa fa-paper-plane"></i> Send Message
-    </button>
-  </form>
-  <p style="color:var(--muted);font-size:12px;text-align:center;margin-top:6px;">Form powered by Formspree</p>
+       
     </div>
 
     <div class="files" id="filesContainer">
@@ -629,5 +629,6 @@ window.addEventListener('keydown', (e)=> { if(e.key === 'Escape') modal.classLis
 </script>
 </body>
 </html>
+
 
 
