@@ -1,634 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Djilani Mohamed Younes — TP Web 3D (Fashion Edition)</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js Dice Roll - Choose Number</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #111;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
-<!-- Optional icons; remove if you want zero external -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-k6RqeWeci5ZR/Lv4MR0sA0FfDOMkqG1b8v0E2K2Vq1h0w1m6s0aB8f1F1XkQ2Jbq6X6u6z3zQ2Fq2R3Gx2z9xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      #canvas-container {
+        flex: 1;
+      }
 
-<style>
-:root{
-  --bg:#05060a;
-  --glass: rgba(255,255,255,0.04);
-  --muted:#9aa8b3;
-  --accent:#00e5ff;
-  --accent2:#8458ff;
-  --pink:#ff6ec7;
-  --neon: 0 6px 40px rgba(0,229,255,0.08), 0 0 40px rgba(0,229,255,0.06);
-  --glass-border: rgba(255,255,255,0.06);
-  --glass-2: rgba(255,255,255,0.02);
-}
+      #ui {
+        padding: 10px;
+        background: #222;
+        border-top: 1px solid #333;
+        text-align: center;
+      }
 
-/* base */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: radial-gradient(1200px 600px at 10% 10%, rgba(132,88,255,0.08), transparent),
-              radial-gradient(900px 500px at 90% 90%, rgba(0,229,255,0.03), transparent),
-              var(--bg);
-  color:#eaf6ff;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  overflow-y:auto;
-  display:flex;
-  justify-content:center;
-  padding:48px 20px;
-  align-items:flex-start;
-  gap:24px;
-}
+      select,
+      button {
+        padding: 8px 14px;
+        font-size: 16px;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-container"></div>
 
-/* container */
-.app{
-  width:100%;
-  max-width:1200px;
-  display:grid;
-  grid-template-columns: 380px 1fr;
-  gap:24px;
-  align-items:start;
-}
+    <div id="ui">
+      <select id="chosenNumber">
+        <option value="1">Land on 1</option>
+        <option value="2">Land on 2</option>
+        <option value="3">Land on 3</option>
+        <option value="4">Land on 4</option>
+        <option value="5">Land on 5</option>
+        <option value="6" selected>Land on 6</option>
+      </select>
 
-/* left column - profile card */
-.profile-card{
-  position:relative;
-  border-radius:18px;
-  padding:28px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid var(--glass-border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-  overflow:visible;
-}
-
-/* neon halo wrapper */
-.pfp-wrap{
-  position:relative;
-  width:220px;
-  height:220px;
-  margin:0 auto 18px auto;
-  display:grid;
-  place-items:center;
-  transform-style:preserve-3d;
-  perspective:900px;
-}
-
-/* glowing ring using pseudo-elements */
-.pfp-wrap::before,
-.pfp-wrap::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  pointer-events:none;
-  mix-blend-mode:screen;
-}
-.pfp-wrap::before{
-  background: conic-gradient(from 0deg, rgba(0,229,255,0.9), rgba(132,88,255,0.85), rgba(255,110,199,0.75), rgba(0,229,255,0.9));
-  filter:blur(18px) saturate(140%);
-  opacity:0.9;
-  transform:scale(1.25);
-  animation: spin 12s linear infinite;
-}
-.pfp-wrap::after{
-  box-shadow: 0 20px 40px rgba(0,229,255,0.06), inset 0 2px 16px rgba(255,255,255,0.02);
-  transform:scale(1.08);
-  filter: blur(10px);
-  opacity:0.6;
-}
-
-/* profile image container - glass border + 3D tilt */
-.pfp{
-  width:180px;height:180px;border-radius:50%;
-  overflow:hidden;
-  display:block;
-  border:6px solid rgba(255,255,255,0.06);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 6px 30px rgba(0,0,0,0.5);
-  transform: translateZ(30px);
-  transition: transform 300ms cubic-bezier(.2,.9,.2,1);
-  background:linear-gradient(135deg,#061426, #07102a);
-}
-.pfp img{width:100%;height:100%;object-fit:cover;display:block;}
-
-/* small 3D floating cube */
-.floating-block{
-  position:absolute;
-  top:-30px;
-  right:-30px;
-  width:120px;height:120px;border-radius:14px;
-  background: linear-gradient(135deg, rgba(132,88,255,0.12), rgba(0,229,255,0.08));
-  border:1px solid rgba(255,255,255,0.03);
-  display:grid;place-items:center;
-  backdrop-filter: blur(6px);
-  transform: rotateX(18deg) rotateY(-18deg) translateZ(10px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.5);
-  animation: floaty 6s ease-in-out infinite;
-}
-.floating-block .cube {
-  width:48px;height:48px;border-radius:10px;
-  background:linear-gradient(180deg,var(--accent),var(--accent2));
-  box-shadow:var(--neon);
-  transform:rotate(45deg);
-  animation: cube-rotate 8s linear infinite;
-}
-
-/* name, title, socials */
-.profile-meta{
-  text-align:center;
-  margin-top:6px;
-}
-.profile-meta h1{font-size:20px;letter-spacing:0.4px;margin-bottom:6px}
-.profile-meta p{color:var(--muted);font-size:13px;margin-bottom:10px}
-.socials{display:flex;gap:8px;justify-content:center}
-.socials a{
-  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
-  font-size:13px;color:var(--accent);
-  text-decoration:none;border:1px solid transparent;transition:all .18s;
-  background:linear-gradient(90deg, rgba(0,229,255,0.03), rgba(132,88,255,0.02));
-}
-.socials a:hover{ transform:translateY(-4px); box-shadow:var(--neon); color:#001b22; background:linear-gradient(90deg,var(--accent),var(--accent2));}
-
-/* right column - files list & controls */
-.panel{
-  border-radius:18px;padding:20px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-  border:1px solid var(--glass-border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-}
-
-/* header row */
-.panel-top{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;
-}
-.h-title{font-size:18px;font-weight:700}
-.controls{display:flex;gap:10px;align-items:center}
-.search{
-  display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--glass-2);
-  border:1px solid rgba(255,255,255,0.02);
-}
-.search input{background:transparent;border:0;outline:none;color:inherit;width:240px}
-
-/* tag filters */
-.tags{display:flex;gap:8px;flex-wrap:wrap}
-.tag{
-  padding:6px 10px;border-radius:999px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,0.03);
-  cursor:pointer;background:transparent;transition:all .12s;
-}
-.tag.active{color:#00222a;background:linear-gradient(90deg,var(--accent),var(--accent2));border-color:transparent;box-shadow:var(--neon)}
-
-/* files grid */
-.files{
-  display:grid;grid-template-columns: repeat(auto-fill,minmax(240px,1fr));gap:14px;
-  margin-top:10px;
-}
-.file{
-  padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-  border:1px solid rgba(255,255,255,0.03);
-  display:flex;flex-direction:column;gap:8px;align-items:flex-start;
-  transition:transform .16s, box-shadow .16s;
-}
-.file:hover{ transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,0.6) }
-
-/* preview thumbnail */
-.thumb{
-  width:100%;height:120px;border-radius:10px;background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:grid;place-items:center;overflow:hidden;
-  border:1px solid rgba(255,255,255,0.02);
-}
-.thumb img{max-width:100%;max-height:100%;object-fit:cover;display:block}
-
-/* file meta row */
-.file .row{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.filename{font-weight:700;color:#eaf6ff;font-size:14px}
-.filesize{font-size:12px;color:var(--muted)}
-
-/* buttons */
-.btn{
-  padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent);font-weight:700;
-  cursor:pointer;text-decoration:none;display:inline-flex;gap:8px;align-items:center;
-}
-.btn:active{transform:translateY(1px)}
-
-/* progress bar on button */
-.dl-progress{height:8px;border-radius:999px;background:rgba(255,255,255,0.03);width:100%;overflow:hidden}
-.dl-progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .12s}
-
-/* modal viewer */
-.modal{
-  position:fixed;inset:0;display:none;place-items:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8));z-index:9999;padding:28px;
-}
-.modal.open{display:grid}
-.modal .card{width:min(1100px,96%);height:min(80vh,900px);background:rgba(4,8,14,0.95);border-radius:12px;padding:16px;position:relative;display:flex;flex-direction:column}
-.modal .close{position:absolute;right:12px;top:12px;background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer}
-.viewer{flex:1;border-radius:8px;overflow:auto;background:#071225;padding:10px;border:1px solid rgba(255,255,255,0.02)}
-.viewer img, .viewer iframe{width:100%;height:100%;display:block;border-radius:6px}
-.viewer pre{white-space:pre-wrap;color:#cde;}
-
-/* responsive */
-@media (max-width:980px){
-  .app{grid-template-columns: 1fr; padding-bottom:80px}
-  .profile-card{order:2}
-  .panel{order:1}
-  .pfp-wrap{margin-bottom:12px}
-}
-
-/* animations */
-@keyframes spin{  to{ transform: rotate(360deg) } }
-@keyframes floaty{ 0%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } 100%{ transform: translateY(0) } }
-@keyframes cube-rotate{ to{ transform: rotate(405deg) } }
-</style>
-</head>
-<body>
-
-<div class="app">
-  <!-- LEFT: profile card -->
-  <div class="profile-card">
-    <div class="pfp-wrap" id="pfpWrap">
-      <div class="pfp" id="pfp"><img src="./PFP.jpg" alt="PFP"></div>
+      <button id="rollButton">Roll</button>
     </div>
 
-    <div class="floating-block" aria-hidden="true"><div class="cube"></div></div>
+    <script type="module">
+      import * as THREE from "https://unpkg.com/three@latest/build/three.module.js";
 
-    <div class="profile-meta">
-      <h1>Djilani Mohamed Younes</h1>
-      <p>Master 2 — Web3D • IDTW </p>
+      const container = document.getElementById("canvas-container");
 
-      <div class="socials" style="margin-top:10px">
-        <a href="mailto:djilanimoyounes@gmail.com" class="btn"><i class="fa fa-envelope"></i> Email</a>
-        <a href="https://www.linkedin.com/in/djilani-younes-268068311" target="_blank" class="btn"><i class="fa fa-linkedin"></i> LinkedIn</a>
-      </div>
-    </div>
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x111111);
 
-    <div style="margin-top:18px">
-      <h3 style="font-size:13px;color:var(--muted);margin-bottom:8px">About this project</h3>
-      <p style="color:var(--muted);font-size:14px;line-height:1.4">
-        A stylish Web3D portfolio for showcasing TPs. Files live in <code>/TP/</code> in this repo — they are auto-listed below. Click to preview or force-download with progress.
-      </p>
-    </div>
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / (window.innerHeight - 50),
+        0.1,
+        100
+      );
+      camera.position.set(3, 3, 4);
+      camera.lookAt(0, 0, 0);
 
-    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-      <div class="tag active" id="tagAll">All</div>
-      <div class="tag" data-ext="pdf">PDF</div>
-      <div class="tag" data-ext="zip">ZIP</div>
-      <div class="tag" data-ext="png">PNG</div>
-      <div class="tag" data-ext="jpg">JPG</div>
-      <div class="tag" data-ext="txt">TXT</div>
-    </div>
-   <!-- ✅ Add this inside your HTML, right before the closing </div> of the profile-card -->
-<div style="margin-top:30px;">
-  <h3 style="font-size:15px;color:var(--muted);margin-bottom:10px;text-align:center">
-    💌 Contact Me
-  </h3>
-  <form action="https://formspree.io/f/mqaggrgw" method="POST" class="contact-form" style="display:flex;flex-direction:column;gap:12px;margin-top:10px;">
-    <input type="text" name="name" placeholder="Your name" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
-    <input type="email" name="email" placeholder="Your email" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;">
-    <textarea name="message" placeholder="Your message..." rows="4" required style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-2);color:#eaf6ff;font-size:14px;resize:none;"></textarea>
-    <button type="submit" class="btn" style="justify-content:center;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001b22;border:0;font-weight:700;cursor:pointer;box-shadow:var(--neon);">
-      <i class="fa fa-paper-plane"></i> Send Message
-    </button>
-  </form>
-  <p style="color:var(--muted);font-size:12px;text-align:center;margin-top:6px;">Form powered by Formspree</p>
-</div>
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight - 50);
+      container.appendChild(renderer.domElement);
 
-  </div>
+      const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambient);
 
-  <!-- RIGHT: files + controls -->
-  <div class="panel">
-    <div class="panel-top">
-      <div class="h-title">TP Files — Auto-Loaded</div>
-      <div class="controls">
-        <div class="search">
-          <i class="fa fa-search" style="opacity:0.7"></i>
-          <input id="q" placeholder="Search filenames (e.g., TP1, design, final)"/>
-        </div>
-        <button class="btn" id="refreshBtn" title="Refresh list"><i class="fa fa-sync"></i> Refresh</button>
-      </div>
-       
-    </div>
+      const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+      dir.position.set(5, 10, 7);
+      scene.add(dir);
 
-    <div class="files" id="filesContainer">
-      <!-- file cards injected here -->
-      <div style="color:var(--muted);padding:20px">Loading files...</div>
-    </div>
-  </div>
-</div>
+      const textureLoader = new THREE.TextureLoader();
 
-<!-- Modal viewer -->
-<div class="modal" id="modal">
-  <div class="card">
-    <button class="close" id="modalClose"><i class="fa fa-times"></i></button>
-    <div class="viewer" id="viewer">
-      <!-- content injected -->
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-      <button class="btn" id="modalDownload"><i class="fa fa-download"></i> Download</button>
-    </div>
-  </div>
-</div>
+      /*
+        BoxGeometry materials order:
+        0: +X (right)
+        1: -X (left)
+        2: +Y (top)
+        3: -Y (bottom)
+        4: +Z (front)
+        5: -Z (back)
+      */
 
-<!-- background canvas (particles) -->
-<canvas id="bgCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:0"></canvas>
+      const materials = [
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice4.png") }), // +X
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice3.png") }), // -X
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice6.png") }), // +Y (TOP)
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice1.png") }), // -Y (BOTTOM)
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice2.png") }), // +Z
+        new THREE.MeshStandardMaterial({ map: textureLoader.load("dice5.png") }), // -Z
+      ];
 
-<script>
-/* --------------- Background particles (subtle) --------------- */
-(() => {
-  const c = document.getElementById('bgCanvas');
-  const ctx = c.getContext('2d');
-  let w, h, particles = [];
-  function resize(){ w = c.width = innerWidth; h = c.height = innerHeight; init(); }
-  window.addEventListener('resize', resize, {passive:true});
-  function rand(a,b){ return a + Math.random()*(b-a); }
-  function init(){
-    particles = [];
-    const count = Math.max(30, Math.floor((w*h)/80000));
-    for(let i=0;i<count;i++){
-      particles.push({
-        x: Math.random()*w,
-        y: Math.random()*h,
-        r: rand(0.6,2.6),
-        vx: rand(-0.2,0.2),
-        vy: rand(-0.2,0.2),
-        hue: rand(180,260),
-        life: rand(60,500)
+      const geo = new THREE.BoxGeometry(1, 1, 1);
+      const dice = new THREE.Mesh(geo, materials);
+      dice.position.y = 0.5;
+      scene.add(dice);
+
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(10, 10),
+        new THREE.MeshStandardMaterial({ color: 0x222222 })
+      );
+      ground.rotation.x = -Math.PI / 2;
+      scene.add(ground);
+
+      let rolling = false;
+      let rollFrame = 0;
+      const maxRollFrames = 60;
+
+      // Current faces (with rotation = 0,0,0):
+      //  6 on top (+Y)
+      //  1 bottom (-Y)
+      //  4 right (+X)
+      //  3 left (-X)
+      //  2 front (+Z)
+      //  5 back (-Z)
+
+      // Rotations to bring each number to the TOP (+Y)
+      const numberToRotation = {
+        1: { x: Math.PI, y: 0, z: 0 },             // bottom (-Y) -> top
+        2: { x: -Math.PI / 2, y: 0, z: 0 },        // front (+Z) -> top
+        3: { x: 0, y: 0, z: -Math.PI / 2 },        // left (-X) -> top
+        4: { x: 0, y: 0, z: Math.PI / 2 },         // right (+X) -> top
+        5: { x: Math.PI / 2, y: 0, z: 0 },         // back (-Z) -> top
+        6: { x: 0, y: 0, z: 0 },                   // already on top
+      };
+
+      let targetRotation = { x: 0, y: 0, z: 0 };
+
+      function rollDice() {
+        if (rolling) return;
+
+        const selected = parseInt(
+          document.getElementById("chosenNumber").value,
+          10
+        );
+
+        targetRotation = numberToRotation[selected];
+
+        // Start rolling
+        rolling = true;
+        rollFrame = 0;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        if (rolling) {
+          rollFrame++;
+
+          // Random spin while rolling
+          dice.rotation.x += 0.3;
+          dice.rotation.y += 0.4;
+          dice.rotation.z += 0.2;
+
+          if (rollFrame >= maxRollFrames) {
+            rolling = false;
+
+            // Snap to chosen orientation where the selected number is on top
+            dice.rotation.set(
+              targetRotation.x,
+              targetRotation.y,
+              targetRotation.z
+            );
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      document.getElementById("rollButton").addEventListener("click", rollDice);
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / (window.innerHeight - 50);
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight - 50);
       });
-    }
-  }
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(let p of particles){
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life--;
-      if(p.life<0 || p.x<-50 || p.y<-50 || p.x>w+50 || p.y>h+50){
-        p.x = Math.random()*w; p.y = Math.random()*h; p.life = rand(60,500);
-      }
-      ctx.beginPath();
-      ctx.fillStyle = 'hsla(' + p.hue + ',90% ,60% , 0.06)';
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fill();
-    }
-    requestAnimationFrame(draw);
-  }
-  resize();
-  draw();
-})();
-
-/* --------------- helper utilities --------------- */
-function fmtSize(bytes) {
-  if(bytes === undefined || bytes === null) return '';
-  if(bytes < 1024) return bytes + ' B';
-  if(bytes < 1024*1024) return Math.round(bytes/1024) + ' KB';
-  return (bytes/(1024*1024)).toFixed(1) + ' MB';
-}
-function extOf(name){ return (name.split('.').pop() || '').toLowerCase(); }
-
-/* --------------- GitHub load & UI logic --------------- */
-const repoApi = "https://api.github.com/repos/dj-moyounes/web3d/contents/TP";
-const filesContainer = document.getElementById('filesContainer');
-const qInput = document.getElementById('q');
-const refreshBtn = document.getElementById('refreshBtn');
-const modal = document.getElementById('modal');
-const viewer = document.getElementById('viewer');
-const modalClose = document.getElementById('modalClose');
-const modalDownload = document.getElementById('modalDownload');
-const tags = Array.from(document.querySelectorAll('.tag'));
-let allFiles = [];
-let activeFilter = null;
-let currentFile = null;
-
-async function fetchFolder(){
-  filesContainer.innerHTML = '<div style="color:var(--muted);padding:20px">Loading files...</div>';
-  try {
-    const res = await fetch(repoApi);
-    if(!res.ok) throw new Error('GitHub API ' + res.status);
-    const js = await res.json();
-    // sort by type then name
-    js.sort((a,b)=> (a.type===b.type ? a.name.localeCompare(b.name) : (a.type==='dir'?-1:1)));
-    allFiles = js;
-    renderFiles();
-  } catch(e){
-    filesContainer.innerHTML = '<div style="color:#ff9b9b;padding:20px">Failed to load folder. Make sure the repo & folder are public.</div>';
-    console.error(e);
-  }
-}
-
-function renderFiles(){
-  const q = qInput.value.trim().toLowerCase();
-  filesContainer.innerHTML = '';
-  const list = allFiles.filter(f=>{
-    if(activeFilter && activeFilter !== 'all'){
-      if(f.type==='dir') return true;
-      if(extOf(f.name) !== activeFilter) return false;
-    }
-    if(q && !f.name.toLowerCase().includes(q)) return false;
-    return true;
-  });
-
-  if(list.length === 0){
-    filesContainer.innerHTML = '<div style="color:var(--muted);padding:20px">No files found.</div>';
-    return;
-  }
-
-  list.forEach(f => filesContainer.appendChild(makeFileCard(f)));
-}
-
-function makeFileCard(file){
-  const el = document.createElement('div');
-  el.className = 'file';
-  // thumbnail area
-  const thumb = document.createElement('div'); thumb.className='thumb';
-  // if image, show preview thumbnail quickly
-  if(['png','jpg','jpeg','gif','webp','svg'].includes(extOf(file.name))){
-    const img = document.createElement('img');
-    img.src = file.download_url;
-    img.alt = file.name;
-    thumb.appendChild(img);
-  } else {
-    // generic icon + extension text
-    thumb.innerHTML = `<div style="text-align:center;color:var(--muted);font-weight:700">
-      <div style="font-size:28px">📄</div>
-      <div style="margin-top:6px">${extOf(file.name) || 'file'}</div>
-    </div>`;
-  }
-
-  const row1 = document.createElement('div'); row1.className='row';
-  const left = document.createElement('div');
-  left.style.display='flex'; left.style.flexDirection='column';
-  left.innerHTML = `<div class="filename">${file.name}</div><div class="filesize">${file.type === 'dir' ? 'Folder' : fmtSize(file.size)}</div>`;
-  const right = document.createElement('div');
-
-  // preview/open button
-  const viewBtn = document.createElement('button'); viewBtn.className='btn';
-  viewBtn.innerHTML = '<i class="fa fa-eye"></i> Preview';
-  viewBtn.addEventListener('click', ()=> openPreview(file));
-  right.appendChild(viewBtn);
-
-  if(file.type !== 'dir'){
-    // download button w/ progress bar
-    const dlWrap = document.createElement('div'); dlWrap.style.width='160px';
-    const dlBtn = document.createElement('button'); dlBtn.className='btn';
-    dlBtn.textContent = '⬇️ Download';
-    dlBtn.style.justifyContent='center';
-    const progressBar = document.createElement('div'); progressBar.className='dl-progress'; progressBar.style.marginTop='8px';
-    const progressFill = document.createElement('i'); progressBar.appendChild(progressFill);
-    dlBtn.addEventListener('click', async (ev) => {
-      dlBtn.disabled = true; dlBtn.style.opacity = 0.7;
-      progressFill.style.width = '0%';
-      try {
-        await fetchWithProgress(file.download_url, file.name, (p) => { progressFill.style.width = (p*100).toFixed(2) + '%' });
-      } catch(err) {
-        alert('Download failed: ' + err.message);
-      } finally {
-        dlBtn.disabled = false; dlBtn.style.opacity = 1;
-        setTimeout(()=> progressFill.style.width = '0%', 800);
-      }
-    });
-    dlWrap.appendChild(dlBtn);
-    dlWrap.appendChild(progressBar);
-    right.appendChild(dlWrap);
-  } else {
-    const openBtn = document.createElement('a');
-    openBtn.className='btn';
-    openBtn.href = file.html_url;
-    openBtn.target='_blank';
-    openBtn.textContent = 'Open';
-    right.appendChild(openBtn);
-  }
-
-  row1.appendChild(left); row1.appendChild(right);
-
-  el.appendChild(thumb);
-  el.appendChild(row1);
-  return el;
-}
-
-/* --------------- preview modal logic --------------- */
-modalClose.addEventListener('click', ()=> { modal.classList.remove('open'); viewer.innerHTML=''; currentFile=null; });
-
-async function openPreview(file){
-  currentFile = file;
-  viewer.innerHTML = '<div style="color:var(--muted);padding:30px">Preparing preview...</div>';
-  modal.classList.add('open');
-
-  if(file.type === 'dir'){
-    viewer.innerHTML = `<div style="padding:20px;color:var(--muted)">This is a folder. <a href="${file.html_url}" target="_blank">Open on GitHub</a></div>`;
-    modalDownload.style.display='none';
-    return;
-  }
-
-  modalDownload.style.display='inline-flex';
-  modalDownload.onclick = async () => {
-    // start download from modal
-    try { await fetchWithProgress(file.download_url, file.name, (p)=>{/* could show top progress */}); }
-    catch(e){ alert('Download failed: '+e.message) }
-  };
-
-  const extension = extOf(file.name);
-  try {
-    if(['png','jpg','jpeg','gif','webp','svg'].includes(extension)){
-      viewer.innerHTML = `<img src="${file.download_url}" alt="${file.name}">`;
-    } else if(['pdf'].includes(extension)){
-      // embed via iframe for in-modal viewing
-      viewer.innerHTML = `<iframe src="${file.download_url}" style="border:0;height:100%;width:100%"></iframe>`;
-    } else if(['txt','md','json','csv','log'].includes(extension)){
-      const txt = await fetchTextFile(file.download_url);
-      viewer.innerHTML = `<pre>${escapeHtml(txt)}</pre>`;
-    } else {
-      viewer.innerHTML = `<div style="padding:20px;color:var(--muted)">Preview not available. Click Download to save the file.</div>`;
-    }
-  } catch(err){
-    viewer.innerHTML = `<div style="padding:20px;color:#ff9b9b">Preview failed. Try download. (${err.message})</div>`;
-  }
-}
-
-/* quick fetch text */
-async function fetchTextFile(url){
-  const r = await fetch(url);
-  if(!r.ok) throw new Error('Fetch failed: ' + r.status);
-  return await r.text();
-}
-function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* --------------- download with progress (streams) --------------- */
-async function fetchWithProgress(url, filename, onProgress){
-  // use fetch + stream reader to update progress and force-download
-  const resp = await fetch(url);
-  if(!resp.ok) throw new Error('Network error ' + resp.status);
-  const contentLength = resp.headers.get('Content-Length') || resp.headers.get('content-length') || 0;
-  const total = parseInt(contentLength,10) || 0;
-  const reader = resp.body ? resp.body.getReader() : null;
-
-  if (!reader) {
-    // fallback: just fetch blob
-    const blob = await resp.blob();
-    triggerDownload(blob, filename);
-    onProgress && onProgress(1);
-    return;
-  }
-
-  let received = 0;
-  const chunks = [];
-  while(true){
-    const {done, value} = await reader.read();
-    if(done) break;
-    chunks.push(value);
-    received += value.length;
-    onProgress && onProgress(total ? (received/total) : 0);
-  }
-  const blob = new Blob(chunks);
-  triggerDownload(blob, filename);
-  onProgress && onProgress(1);
-}
-
-/* helper to trigger download */
-function triggerDownload(blob, filename){
-  const blobUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = filename || 'file';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=> URL.revokeObjectURL(blobUrl), 1000);
-}
-
-/* --------------- UI: search/filter/refresh --------------- */
-qInput.addEventListener('input', () => renderFiles());
-refreshBtn.addEventListener('click', fetchFolder);
-
-tags.forEach(t => {
-  t.addEventListener('click', () => {
-    tags.forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    if(t.id === 'tagAll'){ activeFilter = null } else { activeFilter = t.dataset.ext; }
-    renderFiles();
-  });
-});
-
-/* quick init */
-fetchFolder();
-
-/* tiny tilt 3D effect on pfp */
-const pfpWrap = document.getElementById('pfpWrap');
-const pfp = document.getElementById('pfp');
-pfpWrap.addEventListener('mousemove', (e)=>{
-  const r = pfpWrap.getBoundingClientRect();
-  const cx = r.left + r.width/2;
-  const cy = r.top + r.height/2;
-  const dx = e.clientX - cx;
-  const dy = e.clientY - cy;
-  const rx = (-dy / r.height) * 10;
-  const ry = (dx / r.width) * 10;
-  pfp.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(18px)`;
-});
-pfpWrap.addEventListener('mouseleave', ()=> pfp.style.transform = 'translateZ(30px)');
-
-/* keyboard: Esc to close modal */
-window.addEventListener('keydown', (e)=> { if(e.key === 'Escape') modal.classList.remove('open'); });
-
-</script>
-</body>
+    </script>
+  </body>
 </html>
-
-
-
