@@ -506,6 +506,54 @@
             </div>
         </div>
     </div>
+<!-- 🌟 NEW: 3D PROJECTS PANEL (ENHANCED STYLE) -->
+<div class="panel" style="margin-top:30px; border:1px solid rgba(0,229,255,0.15); box-shadow:0 0 25px rgba(0,229,255,0.08);">
+
+    <div class="h-title" style="color:#00e5ff; text-shadow:0 0 10px rgba(0,229,255,0.5); margin-bottom:15px;">
+        3D Projects
+    </div>
+
+    <div class="files">
+
+        <!-- DICE ROLL CARD -->
+        <div class="file"
+             onclick="window.location.href='./dice-roll/index.html'"
+             style="
+                cursor:pointer;
+                border:1px solid rgba(0,229,255,0.15);
+                box-shadow:0 0 18px rgba(0,229,255,0.05);
+                transition:all .2s ease;
+             "
+             onmouseover="this.style.transform='translateY(-8px) scale(1.03)'; this.style.boxShadow='0 0 25px rgba(0,229,255,0.25)';"
+             onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 0 18px rgba(0,229,255,0.05)'">
+
+            <div class="thumb" style="background:rgba(0,229,255,0.03); border:1px solid rgba(0,229,255,0.08);">
+                <img src="./dice-roll/dice6.png" alt="3D Dice Roll"
+                     style="object-fit:contain; filter:drop-shadow(0 0 8px rgba(0,229,255,0.4));">
+            </div>
+
+            <div class="row">
+                <div style="display:flex;flex-direction:column;">
+                    <div class="filename" style="color:#00e5ff; text-shadow:0 0 10px rgba(0,229,255,0.8);">
+                        Three.js Dice Roll
+                    </div>
+                    <div class="filesize" style="color:#9aeaff;">
+                        Interactive 3D Scene • Custom Physics
+                    </div>
+                </div>
+
+                <div>
+                    <button class="btn"
+                        style="background:linear-gradient(90deg,#00e5ff,#8458ff); color:#001b22; box-shadow:0 0 15px rgba(0,229,255,0.25);">
+                        <i class="fa fa-play"></i> Open
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
     <!-- Modal viewer -->
     <div class="modal" id="modal">
@@ -874,3 +922,4 @@
     </script>
 </body>
 </html>
+
